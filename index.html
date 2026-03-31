@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="A scroll-based historical presentation on China's geopolitical development from 1945 to 1969, using archival images, official sources, and a CSS-only strategic map."
+  >
+  <title>China 1945-1969 | Foreign Relations and Hot Issues</title>
+  <style>
+    @font-face {
+      font-family: "ManropeLocal";
+      src: url("./assets/fonts/Manrope-Variable.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 200 800;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "CormorantGaramondLocal";
+      src: url("./assets/fonts/CormorantGaramond-Variable.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 300 700;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #0a0f12;
+      --bg-2: #10171c;
+      --paper: #f3ead9;
+      --text: #f8f1e5;
+      --muted: #c8bca6;
+      --line: rgba(248, 241, 229, 0.12);
+      --soft-line: rgba(248, 241, 229, 0.08);
+      --red: #b83f30;
+      --red-2: #d65e4f;
+      --gold: #d2a968;
+      --jade: #8cae9b;
+      --deep: #081015;
+      --card: rgba(10, 15, 18, 0.7);
+      --card-2: rgba(18, 25, 31, 0.88);
+      --shadow: 0 34px 90px rgba(0, 0, 0, 0.38);
+      --radius-xl: 34px;
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --max-width: 1400px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y proximity;
+    }
+
+    body {
+      margin: 0;
+      font-family: "ManropeLocal", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 14% 18%, rgba(214, 94, 79, 0.15), transparent 20%),
+        radial-gradient(circle at 82% 12%, rgba(210, 169, 104, 0.12), transparent 24%),
+        radial-gradient(circle at 72% 80%, rgba(140, 174, 155, 0.08), transparent 18%),
+        linear-gradient(180deg, #070c0f 0%, #0e1419 46%, #0a1014 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 26px 26px;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      z-index: 50;
+      transform: translateX(-50%);
+      width: min(calc(100% - 28px), var(--max-width));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 241, 229, 0.12);
+      background: rgba(8, 13, 16, 0.76);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, var(--red), #74241b);
+      color: #fff5e7;
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy strong,
+    .brand-copy span {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-copy strong {
+      font-size: 0.95rem;
+    }
+
+    .brand-copy span {
+      margin-top: 2px;
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      padding: 0.76rem 0.98rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(248, 241, 229, 0.04);
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .nav a:hover,
+    .nav a:focus-visible {
+      transform: translateY(-1px);
+      color: var(--text);
+      border-color: rgba(248, 241, 229, 0.22);
+      background: rgba(248, 241, 229, 0.08);
+    }
+
+    .deck {
+      width: min(calc(100% - 28px), var(--max-width));
+      margin: 0 auto;
+      padding-top: 90px;
+      padding-bottom: 36px;
+    }
+
+    .slide {
+      min-height: 100svh;
+      display: grid;
+      align-items: center;
+      padding: 18px 0;
+      scroll-snap-align: start;
+    }
+
+    .frame {
+      position: relative;
+      width: 100%;
+      padding: clamp(1.3rem, 3vw, 2.7rem);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(150deg, rgba(248, 241, 229, 0.05), rgba(248, 241, 229, 0.01)),
+        linear-gradient(180deg, rgba(13, 19, 23, 0.94), rgba(8, 13, 17, 0.96));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .frame::before {
+      content: "";
+      position: absolute;
+      left: -120px;
+      bottom: -120px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(214, 94, 79, 0.16), transparent 70%);
+      pointer-events: none;
+    }
+
+    .frame::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(210, 169, 104, 0.14), transparent 70%);
+      pointer-events: none;
+    }
+
+    .slide-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.52rem 0.88rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(248, 241, 229, 0.05);
+      color: #f0d9ad;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .slide-no {
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .hero-shell,
+    .map-shell,
+    .period-shell,
+    .close-shell {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .hero-shell,
+    .map-shell {
+      grid-template-columns: 1.05fr 0.95fr;
+    }
+
+    .period-shell,
+    .close-shell {
+      grid-template-columns: 0.92fr 1.08fr;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      font-family: "CormorantGaramondLocal", Georgia, serif;
+      letter-spacing: -0.03em;
+      line-height: 0.95;
+    }
+
+    h1 {
+      font-size: clamp(3.2rem, 7vw, 6.4rem);
+      max-width: 10.5ch;
+    }
+
+    h2 {
+      font-size: clamp(2.5rem, 5vw, 4.4rem);
+      max-width: 12ch;
+    }
+
+    .lead,
+    .copy p {
+      margin: 18px 0 0;
+      font-size: 1rem;
+      line-height: 1.88;
+      color: var(--muted);
+      max-width: 68ch;
+    }
+
+    .pills,
+    .timeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.78rem 0.98rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(248, 241, 229, 0.04);
+      font-size: 0.81rem;
+      font-weight: 700;
+    }
+
+    .pill span {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .thesis-box,
+    .note-card,
+    .text-card,
+    .issue-card,
+    .source-card {
+      padding: 20px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(248, 241, 229, 0.07), rgba(248, 241, 229, 0.02)),
+        rgba(248, 241, 229, 0.02);
+    }
+
+    .thesis-box strong,
+    .map-caption h3,
+    .text-card h3,
+    .note-card h3,
+    .issue-card h3,
+    .source-card h3 {
+      display: block;
+      margin: 0 0 10px;
+      font-size: 0.96rem;
+      letter-spacing: 0.02em;
+    }
+
+    .thesis-box p,
+    .map-caption p,
+    .text-card p,
+    .note-card p,
+    .issue-card p,
+    .source-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 0.9rem;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 620px;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.56)),
+        url("./assets/mao-prc-1949.jpg") center 18% / cover no-repeat;
+      box-shadow: inset 0 -90px 120px rgba(0, 0, 0, 0.42);
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(13, 19, 23, 0.02), rgba(13, 19, 23, 0.48)),
+        linear-gradient(120deg, rgba(184, 63, 48, 0.16), transparent 36%);
+    }
+
+    .hero-card {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(248, 241, 229, 0.18);
+      background: rgba(6, 11, 14, 0.72);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card strong {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--gold);
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .hero-card p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.78;
+      color: #f3ead9;
+    }
+
+    .map-panel {
+      position: relative;
+      padding: 22px;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(248, 241, 229, 0.07), rgba(248, 241, 229, 0.02)),
+        rgba(10, 15, 18, 0.66);
+      overflow: hidden;
+    }
+
+    .map-panel > input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .map-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .map-tabs label {
+      cursor: pointer;
+      padding: 0.82rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(248, 241, 229, 0.04);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .map-tabs label:hover,
+    .map-tabs label:focus-visible {
+      transform: translateY(-1px);
+      color: var(--text);
+      border-color: rgba(248, 241, 229, 0.22);
+    }
+
+    #map-1945:checked ~ .map-tabs label[for="map-1945"],
+    #map-1949:checked ~ .map-tabs label[for="map-1949"],
+    #map-1950s:checked ~ .map-tabs label[for="map-1950s"],
+    #map-1960s:checked ~ .map-tabs label[for="map-1960s"] {
+      color: #fff4e6;
+      border-color: transparent;
+      background: linear-gradient(145deg, var(--red), #7b281d);
+      box-shadow: 0 18px 34px rgba(184, 63, 48, 0.26);
+    }
+
+    .map-stage {
+      position: relative;
+      min-height: 620px;
+      border-radius: 28px;
+      border: 1px solid var(--soft-line);
+      background:
+        radial-gradient(circle at 18% 18%, rgba(248, 241, 229, 0.04), transparent 24%),
+        radial-gradient(circle at 80% 75%, rgba(210, 169, 104, 0.08), transparent 26%),
+        linear-gradient(180deg, rgba(248, 241, 229, 0.03), rgba(248, 241, 229, 0.015));
+      overflow: hidden;
+      --roc-mainland: 0.72;
+      --prc-mainland: 0;
+      --ccp-north: 0.54;
+      --ccp-manchuria: 0.68;
+      --integration-west: 0;
+      --integration-southwest: 0;
+      --korea-line: 0;
+      --strait-line: 0;
+      --soviet-line: 0;
+      --himalaya-line: 0;
+      --third-front: 0;
+      --taiwan-fill: #d2a968;
+    }
+
+    #map-1949:checked ~ .map-stage {
+      --roc-mainland: 0.1;
+      --prc-mainland: 0.84;
+      --ccp-north: 0.15;
+      --ccp-manchuria: 0.14;
+      --taiwan-fill: #d2a968;
+    }
+
+    #map-1950s:checked ~ .map-stage {
+      --roc-mainland: 0.04;
+      --prc-mainland: 0.88;
+      --ccp-north: 0.06;
+      --ccp-manchuria: 0.06;
+      --integration-west: 0.36;
+      --integration-southwest: 0.34;
+      --korea-line: 0.92;
+      --strait-line: 0.76;
+      --taiwan-fill: #d2a968;
+    }
+
+    #map-1960s:checked ~ .map-stage {
+      --roc-mainland: 0.02;
+      --prc-mainland: 0.94;
+      --ccp-north: 0.03;
+      --ccp-manchuria: 0.03;
+      --integration-west: 0.22;
+      --integration-southwest: 0.2;
+      --strait-line: 0.52;
+      --soviet-line: 0.96;
+      --himalaya-line: 0.88;
+      --third-front: 0.92;
+      --taiwan-fill: #8a7247;
+    }
+
+    .map-stage svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 860px;
+      margin: 0 auto;
+      overflow: visible;
+    }
+
+    .sea {
+      fill: rgba(248, 241, 229, 0.03);
+      stroke: rgba(248, 241, 229, 0.08);
+      stroke-width: 1.5;
+    }
+
+    .china-outline {
+      fill: #1f2930;
+      stroke: rgba(248, 241, 229, 0.22);
+      stroke-width: 2;
+    }
+
+    .taiwan-outline {
+      fill: #27333a;
+      stroke: rgba(248, 241, 229, 0.18);
+      stroke-width: 2;
+    }
+
+    .roc-fill,
+    .prc-fill,
+    .zone,
+    .ring,
+    .frontier,
+    .third-front {
+      transition: opacity 360ms ease, fill 360ms ease, stroke 360ms ease;
+    }
+
+    .roc-fill {
+      fill: rgba(210, 169, 104, 0.82);
+      opacity: var(--roc-mainland);
+    }
+
+    .prc-fill {
+      fill: rgba(184, 63, 48, 0.9);
+      opacity: var(--prc-mainland);
+    }
+
+    .zone.north {
+      fill: rgba(184, 63, 48, 0.76);
+      opacity: var(--ccp-north);
+      filter: blur(12px);
+    }
+
+    .zone.manchuria {
+      fill: rgba(214, 94, 79, 0.76);
+      opacity: var(--ccp-manchuria);
+      filter: blur(13px);
+    }
+
+    .ring.west {
+      fill: rgba(210, 169, 104, 0.24);
+      stroke: rgba(210, 169, 104, 0.8);
+      stroke-width: 3;
+      opacity: var(--integration-west);
+    }
+
+    .ring.southwest {
+      fill: rgba(210, 169, 104, 0.22);
+      stroke: rgba(210, 169, 104, 0.8);
+      stroke-width: 3;
+      opacity: var(--integration-southwest);
+    }
+
+    .taiwan-fill {
+      fill: var(--taiwan-fill);
+    }
+
+    .frontier,
+    .third-front {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 10 12;
+      stroke-width: 4;
+    }
+
+    .frontier.korea {
+      opacity: var(--korea-line);
+      stroke: rgba(140, 174, 155, 0.96);
+    }
+
+    .frontier.strait {
+      opacity: var(--strait-line);
+      stroke: rgba(210, 169, 104, 0.96);
+    }
+
+    .frontier.soviet {
+      opacity: var(--soviet-line);
+      stroke: rgba(214, 94, 79, 0.96);
+    }
+
+    .frontier.himalaya {
+      opacity: var(--himalaya-line);
+      stroke: rgba(248, 241, 229, 0.82);
+    }
+
+    .third-front {
+      opacity: var(--third-front);
+      stroke: rgba(210, 169, 104, 0.98);
+    }
+
+    .third-node {
+      fill: rgba(210, 169, 104, 0.98);
+      opacity: var(--third-front);
+      transition: opacity 360ms ease;
+    }
+
+    .map-label {
+      fill: rgba(248, 241, 229, 0.9);
+      font-family: "ManropeLocal", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .map-label-soft {
+      fill: rgba(200, 188, 166, 0.86);
+      font-family: "ManropeLocal", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .leader {
+      stroke: rgba(248, 241, 229, 0.26);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+    }
+
+    .map-copy article {
+      display: none;
+    }
+
+    #map-1945:checked ~ .map-copy .cap-1945,
+    #map-1949:checked ~ .map-copy .cap-1949,
+    #map-1950s:checked ~ .map-copy .cap-1950s,
+    #map-1960s:checked ~ .map-copy .cap-1960s {
+      display: block;
+    }
+
+    .map-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.78;
+    }
+
+    .photo-wall {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: stretch;
+    }
+
+    .photo-grid-3 {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .photo-grid-2 {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    figure {
+      margin: 0;
+    }
+
+    .photo-card {
+      position: relative;
+      min-height: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: rgba(248, 241, 229, 0.03);
+      box-shadow: 0 20px 38px rgba(0, 0, 0, 0.26);
+    }
+
+    .photo-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 280px;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.05) saturate(0.9);
+      transition: transform 320ms ease, filter 320ms ease;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.03);
+      filter: grayscale(0%) contrast(1.03) saturate(1);
+    }
+
+    .photo-card figcaption {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 16px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.84));
+      font-size: 0.86rem;
+      line-height: 1.72;
+    }
+
+    .photo-card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #fff3df;
+      font-size: 0.86rem;
+      letter-spacing: 0.02em;
+    }
+
+    .photo-card span {
+      color: rgba(248, 241, 229, 0.84);
+    }
+
+    .cards {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-top: 22px;
+    }
+
+    .issue-grid,
+    .sources-grid,
+    .image-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-decoration: none;
+      margin-top: 14px;
+      padding: 0.8rem 0.92rem;
+      border-radius: 16px;
+      border: 1px solid var(--soft-line);
+      background: rgba(248, 241, 229, 0.04);
+      color: #f0d9ad;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+    }
+
+    .source-link:hover,
+    .source-link:focus-visible {
+      transform: translateY(-2px);
+      border-color: rgba(248, 241, 229, 0.2);
+      background: rgba(248, 241, 229, 0.08);
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.82;
+    }
+
+    @media (max-width: 1180px) {
+      .hero-shell,
+      .map-shell,
+      .period-shell,
+      .close-shell,
+      .cards,
+      .photo-grid-3,
+      .sources-grid,
+      .image-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-wall,
+      .photo-grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      h1,
+      h2 {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        position: static;
+        transform: none;
+        width: calc(100% - 28px);
+        margin: 14px auto 0;
+        border-radius: 24px;
+      }
+
+      .deck {
+        padding-top: 12px;
+      }
+
+      .slide {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .nav {
+        justify-content: flex-start;
+      }
+
+      .hero-visual {
+        min-height: 520px;
+      }
+
+      .map-stage {
+        min-height: 520px;
+      }
+
+      .photo-card img {
+        min-height: 240px;
+      }
+
+      .cards,
+      .issue-grid,
+      .sources-grid,
+      .image-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#slide-1">
+      <span class="brand-mark">CFR</span>
+      <span class="brand-copy">
+        <strong>China 1945-1969</strong>
+        <span>Foreign relations, geopolitics, economy, and frontiers</span>
+      </span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#slide-1">Intro</a>
+      <a href="#slide-2">Map</a>
+      <a href="#slide-3">1945-1949</a>
+      <a href="#slide-4">1950s</a>
+      <a href="#slide-5">1960s</a>
+      <a href="#slide-6">Conclusion</a>
+      <a href="#sources">Sources</a>
+    </nav>
+  </header>
+
+  <main class="deck">
+    <section class="slide" id="slide-1">
+      <div class="frame">
+        <div class="slide-head">
+          <span class="eyebrow">Chinese Foreign Relations and Hot Issues</span>
+          <span class="slide-no">Slide 1 of 6</span>
+        </div>
+        <div class="hero-shell">
+          <div class="copy">
+            <h1>China from Postwar Fragmentation to Strategic Autonomy</h1>
+            <p class="lead">
+              This presentation tracks how China moved from the end of World War II and renewed civil war,
+              to the founding of the PRC, to Soviet alliance, and then to a far more autonomous but more insecure position by 1969.
+            </p>
+            <div class="pills">
+              <span class="pill">Duration <span>10-15 minutes</span></span>
+              <span class="pill">Structure <span>6 scroll slides</span></span>
+              <span class="pill">Method <span>Politics, economy, geography</span></span>
+            </div>
+            <div class="thesis-box" style="margin-top: 24px;">
+              <strong>Main argument</strong>
+              <p>
+                Between 1945 and 1969, China did not only change regime. It transformed state power, economic planning,
+                and strategic geography. The key issues of Taiwan, sovereignty, border security, and great-power rivalry
+                all became sharper in this period.
+              </p>
+            </div>
+            <div class="timeline">
+              <span class="pill">1945-1949 <span>Civil war and PRC founding</span></span>
+              <span class="pill">1950-1959 <span>Alliance, war, and planning</span></span>
+              <span class="pill">1960-1969 <span>Split, self-reliance, frontier pressure</span></span>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Archival image of Mao proclaiming the establishment of the PRC">
+            <div class="hero-card">
+              <strong>Archival image</strong>
+              <p>
+                Mao Zedong proclaiming the establishment of the People’s Republic of China in 1949.
+                This is not only a symbolic moment: it marks the transfer of legitimacy from wartime coalition politics
+                to a revolutionary state claiming to speak for all China.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-2">
+      <div class="frame">
+        <div class="slide-head">
+          <span class="eyebrow">Topics and Geography</span>
+          <span class="slide-no">Slide 2 of 6</span>
+        </div>
+        <div class="map-shell">
+          <div class="copy">
+            <h2>Main Topics and Real Strategic Space</h2>
+            <p>
+              The best way to explain China in this period is to combine three levels of analysis:
+              who controlled the state, how economic policy changed, and which geographic frontiers became strategic.
+            </p>
+            <div class="cards">
+              <article class="text-card">
+                <h3>Politics and power</h3>
+                <p>CCP victory, consolidation of the PRC, alliance with the Soviet Union, conflict in Korea, the unresolved Taiwan issue, and the later Sino-Soviet split.</p>
+              </article>
+              <article class="text-card">
+                <h3>Economy</h3>
+                <p>Reconstruction after war, the First Five-Year Plan, collectivization, the Great Leap Forward, recovery, and the move toward self-reliance and Third Front industry.</p>
+              </article>
+              <article class="text-card">
+                <h3>Geography</h3>
+                <p>Manchuria, Taiwan, Tibet, Xinjiang, the Yalu frontier, the Himalayan border, and the long Soviet boundary all shaped Chinese foreign policy.</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="map-panel">
+            <input type="radio" name="geo" id="map-1945" checked>
+            <input type="radio" name="geo" id="map-1949">
+            <input type="radio" name="geo" id="map-1950s">
+            <input type="radio" name="geo" id="map-1960s">
+
+            <div class="map-tabs" aria-label="Map states">
+              <label for="map-1945">1945</label>
+              <label for="map-1949">1949</label>
+              <label for="map-1950s">1950s</label>
+              <label for="map-1960s">1960s</label>
+            </div>
+
+            <div class="map-stage">
+              <svg viewBox="0 0 860 620" role="img" aria-label="Real silhouette map of China showing changing political control and frontier pressure">
+                <defs>
+                  <clipPath id="clip-mainland">
+                    <path d="M 487.4 573.5 L 466.0 576.2 L 471.9 555.5 L 493.1 551.4 L 490.4 564.4 L 487.4 573.5 Z M 707.6 82.7 L 744.8 99.0 L 769.2 113.9 L 801.3 103.0 L 789.6 123.0 L 776.7 155.6 L 750.4 158.4 L 751.9 190.6 L 745.5 199.0 L 732.2 198.6 L 714.6 213.7 L 697.6 208.2 L 674.8 227.8 L 646.7 242.6 L 623.6 254.3 L 627.7 240.8 L 631.1 221.9 L 605.7 238.5 L 585.3 249.4 L 585.6 267.5 L 596.4 277.1 L 620.7 270.5 L 640.2 277.0 L 624.3 289.7 L 606.0 306.2 L 613.1 325.9 L 625.9 355.9 L 634.3 379.7 L 629.3 392.5 L 634.9 410.2 L 624.5 424.2 L 605.0 462.0 L 575.7 495.4 L 543.7 510.5 L 531.5 512.4 L 506.5 528.2 L 488.7 547.2 L 478.4 536.7 L 464.3 525.5 L 445.5 524.0 L 441.5 508.5 L 423.7 499.7 L 400.5 509.9 L 383.6 513.7 L 378.9 534.1 L 371.0 529.9 L 361.3 528.0 L 346.3 519.2 L 342.0 503.0 L 325.5 491.1 L 339.1 459.2 L 339.2 434.1 L 329.4 421.0 L 308.3 419.8 L 306.6 403.4 L 286.9 406.1 L 260.7 427.9 L 244.8 425.7 L 229.0 421.6 L 213.8 437.4 L 204.9 428.3 L 175.7 423.1 L 155.5 413.1 L 144.1 403.2 L 121.1 388.1 L 98.2 380.8 L 82.1 353.4 L 91.6 347.5 L 87.9 326.5 L 53.3 301.6 L 40.1 282.1 L 36.0 268.6 L 28.7 258.8 L 21.3 245.8 L 23.2 238.5 L 44.1 228.0 L 62.4 220.0 L 83.2 211.9 L 105.0 199.7 L 112.7 186.6 L 126.5 152.9 L 142.1 121.1 L 174.4 119.2 L 185.6 101.9 L 200.2 90.0 L 214.3 109.4 L 241.2 128.1 L 240.9 153.4 L 273.1 158.3 L 296.3 169.9 L 309.6 193.8 L 349.8 197.0 L 379.3 197.1 L 413.5 206.7 L 433.9 203.1 L 473.5 197.1 L 497.5 183.0 L 504.3 172.5 L 506.9 156.3 L 527.1 160.9 L 559.2 146.4 L 577.5 131.5 L 606.0 131.2 L 595.8 114.5 L 575.8 115.3 L 556.1 114.8 L 561.8 92.6 L 583.3 86.7 L 601.1 69.7 L 619.6 47.9 L 612.5 35.5 L 638.8 24.8 L 674.7 29.0 L 693.7 50.8 L 702.9 67.3 L 707.6 82.7 Z"></path>
+                  </clipPath>
+                </defs>
+
+                <rect class="sea" x="10" y="10" width="840" height="600" rx="26"></rect>
+
+                <path class="china-outline" d="M 487.4 573.5 L 466.0 576.2 L 471.9 555.5 L 493.1 551.4 L 490.4 564.4 L 487.4 573.5 Z M 707.6 82.7 L 744.8 99.0 L 769.2 113.9 L 801.3 103.0 L 789.6 123.0 L 776.7 155.6 L 750.4 158.4 L 751.9 190.6 L 745.5 199.0 L 732.2 198.6 L 714.6 213.7 L 697.6 208.2 L 674.8 227.8 L 646.7 242.6 L 623.6 254.3 L 627.7 240.8 L 631.1 221.9 L 605.7 238.5 L 585.3 249.4 L 585.6 267.5 L 596.4 277.1 L 620.7 270.5 L 640.2 277.0 L 624.3 289.7 L 606.0 306.2 L 613.1 325.9 L 625.9 355.9 L 634.3 379.7 L 629.3 392.5 L 634.9 410.2 L 624.5 424.2 L 605.0 462.0 L 575.7 495.4 L 543.7 510.5 L 531.5 512.4 L 506.5 528.2 L 488.7 547.2 L 478.4 536.7 L 464.3 525.5 L 445.5 524.0 L 441.5 508.5 L 423.7 499.7 L 400.5 509.9 L 383.6 513.7 L 378.9 534.1 L 371.0 529.9 L 361.3 528.0 L 346.3 519.2 L 342.0 503.0 L 325.5 491.1 L 339.1 459.2 L 339.2 434.1 L 329.4 421.0 L 308.3 419.8 L 306.6 403.4 L 286.9 406.1 L 260.7 427.9 L 244.8 425.7 L 229.0 421.6 L 213.8 437.4 L 204.9 428.3 L 175.7 423.1 L 155.5 413.1 L 144.1 403.2 L 121.1 388.1 L 98.2 380.8 L 82.1 353.4 L 91.6 347.5 L 87.9 326.5 L 53.3 301.6 L 40.1 282.1 L 36.0 268.6 L 28.7 258.8 L 21.3 245.8 L 23.2 238.5 L 44.1 228.0 L 62.4 220.0 L 83.2 211.9 L 105.0 199.7 L 112.7 186.6 L 126.5 152.9 L 142.1 121.1 L 174.4 119.2 L 185.6 101.9 L 200.2 90.0 L 214.3 109.4 L 241.2 128.1 L 240.9 153.4 L 273.1 158.3 L 296.3 169.9 L 309.6 193.8 L 349.8 197.0 L 379.3 197.1 L 413.5 206.7 L 433.9 203.1 L 473.5 197.1 L 497.5 183.0 L 504.3 172.5 L 506.9 156.3 L 527.1 160.9 L 559.2 146.4 L 577.5 131.5 L 606.0 131.2 L 595.8 114.5 L 575.8 115.3 L 556.1 114.8 L 561.8 92.6 L 583.3 86.7 L 601.1 69.7 L 619.6 47.9 L 612.5 35.5 L 638.8 24.8 L 674.7 29.0 L 693.7 50.8 L 702.9 67.3 L 707.6 82.7 Z"></path>
+
+                <g clip-path="url(#clip-mainland)">
+                  <rect class="roc-fill" x="0" y="0" width="860" height="620"></rect>
+                  <rect class="prc-fill" x="0" y="0" width="860" height="620"></rect>
+                  <ellipse class="zone north" cx="446" cy="212" rx="134" ry="84"></ellipse>
+                  <ellipse class="zone manchuria" cx="642" cy="144" rx="116" ry="80"></ellipse>
+                  <ellipse class="ring west" cx="176" cy="196" rx="92" ry="76"></ellipse>
+                  <ellipse class="ring southwest" cx="236" cy="360" rx="112" ry="84"></ellipse>
+                </g>
+
+                <path class="taiwan-outline taiwan-fill" d="M 632.8 483.2 L 625.2 508.6 L 619.7 521.5 L 613.0 508.2 L 611.6 496.5 L 619.1 481.0 L 629.2 469.0 L 635.0 473.7 L 632.8 483.2 Z"></path>
+
+                <path class="frontier korea" d="M 734 170 C 760 172, 785 166, 806 148"></path>
+                <path class="frontier strait" d="M 646 470 C 630 486, 624 500, 622 516"></path>
+                <path class="frontier soviet" d="M 142 116 C 246 54, 430 34, 718 88"></path>
+                <path class="frontier himalaya" d="M 136 402 C 250 450, 360 454, 474 430"></path>
+                <path class="third-front" d="M 540 314 C 488 322, 434 334, 374 352"></path>
+                <path class="third-front" d="M 522 352 C 470 366, 430 382, 386 404"></path>
+                <circle class="third-node" cx="378" cy="352" r="8"></circle>
+                <circle class="third-node" cx="388" cy="404" r="8"></circle>
+
+                <line class="leader" x1="725" y1="100" x2="788" y2="78"></line>
+                <text class="map-label" x="796" y="82">Soviet Border</text>
+
+                <line class="leader" x1="740" y1="180" x2="800" y2="172"></line>
+                <text class="map-label" x="808" y="176">Korea / Yalu</text>
+
+                <line class="leader" x1="632" y1="496" x2="718" y2="494"></line>
+                <text class="map-label" x="726" y="498">Taiwan Strait</text>
+
+                <line class="leader" x1="202" y1="438" x2="80" y2="474"></line>
+                <text class="map-label" x="26" y="480">Himalayas / India</text>
+
+                <text class="map-label-soft" x="124" y="184">Xinjiang</text>
+                <text class="map-label-soft" x="196" y="360">Tibet</text>
+                <text class="map-label-soft" x="418" y="206">North China</text>
+                <text class="map-label-soft" x="604" y="150">Manchuria</text>
+                <text class="map-label-soft" x="612" y="536">Taiwan</text>
+                <text class="map-label-soft" x="336" y="388">Third Front</text>
+              </svg>
+            </div>
+
+            <div class="map-copy">
+              <article class="map-caption cap-1945">
+                <h3>1945: the borders are the same, but control is not.</h3>
+                <p>The most important change after World War II is political, not cartographic. The Nationalists still claim China, but Communist power grows in North China and especially in Manchuria.</p>
+              </article>
+              <article class="map-caption cap-1949">
+                <h3>1949: mainland control changes radically.</h3>
+                <p>The PRC controls the mainland, while the ROC retreats to Taiwan. This is why the map does not show a new international border, but a new political division with major foreign-policy consequences.</p>
+              </article>
+              <article class="map-caption cap-1950s">
+                <h3>1950s: consolidation plus militarized frontiers.</h3>
+                <p>The state expands its effective reach westward and southwestward, while the Korean frontier and Taiwan Strait become high-risk Cold War zones.</p>
+              </article>
+              <article class="map-caption cap-1960s">
+                <h3>1960s: the key shift is strategic pressure.</h3>
+                <p>By the 1960s the main issue is not internal conquest, but pressure on the Soviet border, the Himalayan frontier, and the need to move industry inland through Third Front construction.</p>
+              </article>
+              <p class="map-note">This is a real China silhouette used to compare political control and frontier stress, not a legal map of sovereignty claims.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-3">
+      <div class="frame">
+        <div class="slide-head">
+          <span class="eyebrow">Period I</span>
+          <span class="slide-no">Slide 3 of 6</span>
+        </div>
+        <div class="period-shell">
+          <div class="copy">
+            <h2>1945-1949: Civil War and the Founding of the PRC</h2>
+            <p>
+              After Japan’s defeat, China did not enter a stable peace. It entered a struggle over state power.
+              The key question was which political force could claim legitimacy, rebuild the economy, and control the strategic heart of the country.
+            </p>
+            <div class="cards">
+              <article class="text-card">
+                <h3>Politics and power</h3>
+                <p>The civil war resumed between the CCP and the Nationalists. The Communists built momentum through organization, military discipline, and strong rural support, while the Nationalists lost legitimacy.</p>
+              </article>
+              <article class="text-card">
+                <h3>Economy</h3>
+                <p>China emerged from war with inflation, damaged transport, and exhausted institutions. Land reform in Communist-controlled areas helped create a social base for the new regime.</p>
+              </article>
+              <article class="text-card">
+                <h3>Geography</h3>
+                <p>Manchuria was decisive because it offered railways, industrial assets, and strategic depth. Taiwan became critical after 1949 because it preserved a rival Chinese government.</p>
+              </article>
+            </div>
+            <div class="timeline">
+              <span class="pill">1945 <span>Japan surrenders</span></span>
+              <span class="pill">1946-1948 <span>Full-scale civil war</span></span>
+              <span class="pill">Oct. 1, 1949 <span>PRC proclaimed</span></span>
+            </div>
+          </div>
+
+          <div class="photo-wall">
+            <figure class="photo-card">
+              <img src="./assets/huaihai-campaign.jpg" alt="PLA troops during the Huaihai campaign">
+              <figcaption>
+                <strong>Huaihai Campaign, 1948-1949</strong>
+                <span>One of the decisive Communist victories of the civil war. Military success on the mainland made the proclamation of the PRC possible.</span>
+              </figcaption>
+            </figure>
+            <figure class="photo-card">
+              <img src="./assets/mao-prc-1949.jpg" alt="Mao proclaiming the establishment of the PRC in 1949">
+              <figcaption>
+                <strong>Tiananmen, October 1, 1949</strong>
+                <span>The founding of the PRC transforms a military victory into a new claim to state legitimacy and national representation.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-4">
+      <div class="frame">
+        <div class="slide-head">
+          <span class="eyebrow">Period II</span>
+          <span class="slide-no">Slide 4 of 6</span>
+        </div>
+        <div class="period-shell">
+          <div class="copy">
+            <h2>1950-1959: Alliance, War, and Socialist Transformation</h2>
+            <p>
+              In the 1950s, the PRC became a functioning revolutionary state. Security, diplomacy, and economic planning were closely linked:
+              China fought in Korea, allied with the Soviet Union, expanded diplomacy in Asia and Africa, and launched deep socialist restructuring at home.
+            </p>
+            <div class="cards">
+              <article class="text-card">
+                <h3>Politics and power</h3>
+                <p>The 1950 Sino-Soviet Treaty gave China strategic backing. The Korean War hardened the leadership’s view that foreign policy and national survival were inseparable.</p>
+              </article>
+              <article class="text-card">
+                <h3>Economy</h3>
+                <p>The First Five-Year Plan emphasized heavy industry, planning, and Soviet technical help. By the late 1950s, the Great Leap Forward attempted a far more radical and risky acceleration.</p>
+              </article>
+              <article class="text-card">
+                <h3>Geography</h3>
+                <p>The Yalu River, Tibet, Xinjiang, and Taiwan all became strategic zones. Geography now mattered not only for defense, but for state-building and infrastructure.</p>
+              </article>
+            </div>
+            <div class="timeline">
+              <span class="pill">1950 <span>Sino-Soviet Treaty</span></span>
+              <span class="pill">1950-1953 <span>Korean War</span></span>
+              <span class="pill">1953-1957 <span>First Five-Year Plan</span></span>
+              <span class="pill">1955 <span>Bandung Conference</span></span>
+              <span class="pill">1958 <span>Great Leap Forward begins</span></span>
+            </div>
+          </div>
+
+          <div class="photo-grid-3">
+            <figure class="photo-card">
+              <img src="./assets/korean-war-triangle-hill.jpg" alt="Chinese infantrymen at the Battle of Triangle Hill during the Korean War">
+              <figcaption>
+                <strong>Korean War</strong>
+                <span>Chinese intervention turned the Yalu frontier into a direct military security problem and pushed the PRC into the center of the Cold War.</span>
+              </figcaption>
+            </figure>
+            <figure class="photo-card">
+              <img src="./assets/bandung-zhou-enlai-1955.jpg" alt="Zhou Enlai at the Bandung Conference in 1955">
+              <figcaption>
+                <strong>Bandung, 1955</strong>
+                <span>Zhou Enlai helped present China as an anti-imperialist, postcolonial actor with a diplomatic role beyond the communist bloc.</span>
+              </figcaption>
+            </figure>
+            <figure class="photo-card">
+              <img src="./assets/backyard-furnace.jpg" alt="Backyard furnace during the Great Leap Forward">
+              <figcaption>
+                <strong>Great Leap imagery</strong>
+                <span>The backyard furnace became a famous symbol of the late-1950s push to compress industrialization into mass mobilization.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-5">
+      <div class="frame">
+        <div class="slide-head">
+          <span class="eyebrow">Period III</span>
+          <span class="slide-no">Slide 5 of 6</span>
+        </div>
+        <div class="period-shell">
+          <div class="copy">
+            <h2>1960-1969: Split, Self-Reliance, and Frontier Anxiety</h2>
+            <p>
+              The 1960s began with crisis. The Sino-Soviet alliance broke down, the economy had to recover from the Great Leap disaster,
+              and China reoriented toward self-reliance. At the same time, border conflict, nuclear development, and the Cultural Revolution
+              made the decade politically intense and internationally volatile.
+            </p>
+            <div class="cards">
+              <article class="text-card">
+                <h3>Politics and power</h3>
+                <p>The withdrawal of Soviet advisers in 1960, the 1962 Sino-Indian War, the Cultural Revolution, and the 1969 Soviet border clashes all deepened insecurity.</p>
+              </article>
+              <article class="text-card">
+                <h3>Economy</h3>
+                <p>Recovery from famine was followed by self-reliance and Third Front construction. The state began moving sensitive industrial capacity inland, away from exposed frontiers and coasts.</p>
+              </article>
+              <article class="text-card">
+                <h3>Geography</h3>
+                <p>The Soviet border and the Himalayas became central strategic problems. Geography shaped not just foreign policy but the physical location of factories, transport, and defense planning.</p>
+              </article>
+            </div>
+            <div class="timeline">
+              <span class="pill">1960 <span>Soviet advisers withdraw</span></span>
+              <span class="pill">1962 <span>Sino-Indian War</span></span>
+              <span class="pill">Oct. 16, 1964 <span>First atomic bomb</span></span>
+              <span class="pill">1964-1966 <span>Third Front begins</span></span>
+              <span class="pill">1966-1969 <span>Cultural Revolution escalates</span></span>
+            </div>
+          </div>
+
+          <div class="photo-grid-2">
+            <figure class="photo-card">
+              <img src="./assets/china-atomic-bomb-1964.jpg" alt="China's first atomic bomb test in 1964">
+              <figcaption>
+                <strong>First atomic bomb, 1964</strong>
+                <span>The test marks a major shift in strategic autonomy: China no longer wanted to depend on Soviet protection.</span>
+              </figcaption>
+            </figure>
+            <figure class="photo-card">
+              <img src="./assets/cultural-revolution-poster.jpg" alt="Cultural Revolution poster">
+              <figcaption>
+                <strong>Cultural Revolution imagery</strong>
+                <span>The decade’s politics were not only international. Radical mobilization at home disrupted institutions and shaped how China related to the outside world.</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-6">
+      <div class="frame">
+        <div class="slide-head">
+          <span class="eyebrow">Legacy</span>
+          <span class="slide-no">Slide 6 of 6</span>
+        </div>
+        <div class="close-shell">
+          <div class="copy">
+            <h2>Why 1945-1969 Still Matters</h2>
+            <p>
+              By 1969, China was far more unified and strategically independent than in 1945, but also more securitized and ideologically intense.
+              The modern language of sovereignty, Taiwan, border security, and autonomous great-power positioning was already taking shape.
+            </p>
+            <div class="issue-grid" style="margin-top: 22px;">
+              <article class="issue-card">
+                <h3>Taiwan</h3>
+                <p>The division created in 1949 survives because it was never only domestic. It quickly became international, military, and symbolic.</p>
+              </article>
+              <article class="issue-card">
+                <h3>Sovereignty</h3>
+                <p>Territorial integrity and non-interference became central principles because state-building and foreign pressure happened at the same time.</p>
+              </article>
+              <article class="issue-card">
+                <h3>Border security</h3>
+                <p>Korea, Tibet, Xinjiang, the Himalayas, and the Soviet frontier all taught the PRC that geography could never be ignored.</p>
+              </article>
+              <article class="issue-card">
+                <h3>Great-power rivalry</h3>
+                <p>China moved from Soviet partnership to Soviet confrontation while also facing the United States. Strategic autonomy became a structural goal.</p>
+              </article>
+            </div>
+          </div>
+
+          <div>
+            <div class="text-card">
+              <h3>Presentation closing line</h3>
+              <p>
+                The history of China from 1945 to 1969 shows that foreign relations were never just about diplomacy. They were also about revolution,
+                survival, economic transformation, and the control of strategic space. That is why this period still matters for current hot issues.
+              </p>
+            </div>
+
+            <div id="sources" class="sources-grid" style="margin-top: 14px;">
+              <article class="source-card">
+                <h3>Official historical sources</h3>
+                <p>Use these for the factual backbone of the presentation: PRC foundation, Taiwan Strait crises, Bandung diplomacy, Sino-Soviet treaty, Tibet, planning periods, and nuclear milestone references.</p>
+              </article>
+              <article class="source-card">
+                <h3>Archival image credits</h3>
+                <p>The photographic and poster material used in the page comes from Wikimedia Commons archival files, with each event credited below so the site remains transparent and reusable.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-head" style="margin-top: 28px; margin-bottom: 16px;">
+          <span class="eyebrow">Official Sources</span>
+          <span class="slide-no">Footer bibliography</span>
+        </div>
+
+        <div class="sources-grid">
+          <article class="source-card">
+            <h3>Office of the Historian</h3>
+            <p>The Chinese Revolution of 1949. Strong overview for the civil war endgame and the founding of the PRC.</p>
+            <a class="source-link" href="https://history.state.gov/milestones/1945-1952/chinese-rev" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Office of the Historian</h3>
+            <p>The Taiwan Straits Crises: 1954-55 and 1958. Essential for understanding why Taiwan remained a geopolitical fault line.</p>
+            <a class="source-link" href="https://history.state.gov/milestones/1953-1960/taiwan-strait-crises" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Office of the Historian</h3>
+            <p>Bandung Conference, 1955. Good for China’s role in the decolonizing world and its diplomatic positioning.</p>
+            <a class="source-link" href="https://history.state.gov/milestones/1953-1960/bandung-conf" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Ministry of Foreign Affairs of the PRC</h3>
+            <p>Conclusion of the Sino-Soviet Treaty of Friendship, Alliance and Mutual Assistance.</p>
+            <a class="source-link" href="https://www.fmprc.gov.cn/mfa_eng/zy/wjls/3604_665547/202405/t20240531_11367548.html" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Ministry of Foreign Affairs of the PRC</h3>
+            <p>The Geneva Conference and the Asian-African Conference. Useful for the PRC’s widening international profile in the 1950s.</p>
+            <a class="source-link" href="https://www.fmprc.gov.cn/eng/zy/wjls/3604_665547/202405/t20240531_11367566.html" target="_blank" rel="noreferrer">Geneva Conference</a>
+            <a class="source-link" href="https://www.fmprc.gov.cn/eng/zy/wjls/3604_665547/202405/t20240531_11367588.html" target="_blank" rel="noreferrer">Asian-African Conference</a>
+          </article>
+          <article class="source-card">
+            <h3>State Council of the PRC</h3>
+            <p>Development and Progress of Tibet. Useful for the official framing of 1951 and later integration policies.</p>
+            <a class="source-link" href="https://english.www.gov.cn/archive/white_paper/2014/08/23/content_281474982986550.htm" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>National Bureau of Statistics of China</h3>
+            <p>Historical planning periods including Economic Rehabilitation, the First Five-Year Plan, and the Second Five-Year Plan.</p>
+            <a class="source-link" href="https://www.stats.gov.cn/english/Statisticaldata/yearlydata/YB1999e/zbe.htm" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Ministry of Foreign Affairs of the PRC</h3>
+            <p>Official references tied to the 1964 atomic bomb milestone and late-1960s Sino-Soviet tensions.</p>
+            <a class="source-link" href="https://www.fmprc.gov.cn/eng/zy/wjls/3604_665547/202405/t20240531_11367578.html" target="_blank" rel="noreferrer">Nuclear reference</a>
+            <a class="source-link" href="https://www.fmprc.gov.cn/eng/zy/wjls/3604_665547/202405/t20240531_11367549.html" target="_blank" rel="noreferrer">1969 Soviet tension reference</a>
+          </article>
+        </div>
+
+        <div class="slide-head" style="margin-top: 28px; margin-bottom: 16px;">
+          <span class="eyebrow">Image Credits</span>
+          <span class="slide-no">Archival material</span>
+        </div>
+
+        <div class="image-grid">
+          <article class="source-card">
+            <h3>Mao proclaiming establishment of PRC</h3>
+            <p>Local file: <code>assets/mao-prc-1949.jpg</code>. Source page on Wikimedia Commons.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:Mao_proclaiming_establishment_of_PRC.jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Huaihai Campaign image</h3>
+            <p>Local file: <code>assets/huaihai-campaign.jpg</code>. Used to show the civil war’s decisive military phase.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:PLAHuaihai.jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Chinese infantrymen, Korean War</h3>
+            <p>Local file: <code>assets/korean-war-triangle-hill.jpg</code>.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:Battle_of_Triangle_Hill_Chinese_Infantrymen.jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Bandung Conference photo</h3>
+            <p>Local file: <code>assets/bandung-zhou-enlai-1955.jpg</code>.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:1955%E5%B9%B44%E6%9C%88%E5%91%A8%E6%81%A9%E6%9D%A5%E3%80%81%E5%B0%BC%E8%B5%AB%E9%B2%81%E4%B8%8E%E5%90%B4%E5%8A%AA%E5%9C%A8%E4%B8%87%E9%9A%86%E4%BC%9A%E8%AE%AE%E6%9C%9F%E9%97%B4%E4%BA%A4%E8%B0%88.jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Backyard furnace photo</h3>
+            <p>Local file: <code>assets/backyard-furnace.jpg</code>. Used for Great Leap Forward visual culture.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:Backyard_furnace2.jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>China’s first atomic bomb</h3>
+            <p>Local file: <code>assets/china-atomic-bomb-1964.jpg</code>.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:ChinaABomb_1.jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Cultural Revolution poster</h3>
+            <p>Local file: <code>assets/cultural-revolution-poster.jpg</code>.</p>
+            <a class="source-link" href="https://commons.wikimedia.org/wiki/File:The_Sunshine_of_Mao_Zedong_Thought_Illuminates_the_Path_of_the_Great_Proletarian_Cultural_Revolution_(%E6%AF%9B%E6%B3%BD%E4%B8%9C%E6%80%9D%E6%83%B3%E7%9A%84%E9%98%B3%E5%85%89%E7%85%A7%E4%BA%AE%E6%97%A0%E4%BA%A7%E9%98%B6%E7%BA%A7%E6%96%87%E5%8C%96%E5%A4%A7%E9%9D%A9%E5%91%BD%E7%9A%84%E9%81%93%E8%B7%AF)_(48648213837).jpg" target="_blank" rel="noreferrer">Open source</a>
+          </article>
+          <article class="source-card">
+            <h3>Map data note</h3>
+            <p>The China and Taiwan silhouettes were derived from public country boundary GeoJSON data and then redrawn here as a CSS-only strategic map.</p>
+            <a class="source-link" href="https://github.com/johan/world.geo.json" target="_blank" rel="noreferrer">GeoJSON source</a>
+          </article>
+        </div>
+
+        <p class="footer-note">
+          No JavaScript is used in this page. The visual interactivity comes from HTML and CSS only. The map is intentionally analytical:
+          it compares control, integration, and frontier stress rather than making a legal cartographic claim.
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
